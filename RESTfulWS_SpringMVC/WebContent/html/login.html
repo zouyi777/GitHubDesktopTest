@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>登录</title><base target="_blank"/>
+<meta charset="utf-8" />
+</head>
+<body>
+	<div>
+		<button id="btn_userinfo">获取用户信息</button>
+		<br>
+		<button id="btn_userinfo_byid">根据id获取用户信息</button>
+		<br>
+		<span id="userinfo"></span>
+	</div>
+	<script type="text/javascript">
+		var baseUrl="http://localhost:8080/RESTfulWS_SpringMVC/rest";
+		var btn_userinfo=document.getElementById("btn_userinfo");
+		var btn_userinfo_byid=document.getElementById("btn_userinfo_byid");
+		var userinfo=document.getElementById("userinfo");
+		
+		btn_userinfo.addEventListener("click", function(){
+			//userinfo.innerHTML="haha";
+			XhrGetRequest();
+		});
+		
+		btn_userinfo_byid.addEventListener("click", function(){
+			//userinfo.innerHTML="haha";
+			XhrGetRequest("2017001");
+		});
+		//get请求
+		function XhrGetRequest(id){
+		    var xhr=new XMLHttpRequest();
+		    //定义回调函数
+		    xhr.onreadystatechange=function(){
+		        if(xhr.readyState==4){
+		            userinfo.innerHTML=xhr.responseText;
+		        }
+		    }
+		    //指定连接方式和地址---文件方式
+		    if(!(id=="" || id==null)){
+		    	xhr.open('get',baseUrl+"/student/"+id,true);
+		    }else{
+		    	xhr.open('get',baseUrl+"/student",true);
+		    }
+		    //发出请求
+		    xhr.send(null);
+		}
+		//post请求
+		function XhrPostRequest(){
+		    var xhr=new XMLHttpRequest();
+		    xhr.onreadystatechange=function(){
+		        if(xhr.readyState==4){
+		        	userinfo.innerHTML=xhr.responseText;
+		        }
+		    }
+		    xhr.open('post',baseUrl+"/student",true);
+		    //post需要设置请求头
+		    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset-UTF-8");
+		    //发送请求
+		    xhr.send("id=2017001");
+		}
+	</script>
+</body>
+</html>

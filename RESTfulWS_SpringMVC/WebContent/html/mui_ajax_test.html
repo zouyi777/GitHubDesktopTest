@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <script src="../js/mui.js"></script>
+    <link href="../css/mui.css" rel="stylesheet"/>
+    <script type="text/javascript" charset="utf-8">
+        mui.init();
+    </script>
+</head>
+<body>
+<br/>
+<div>
+    <button id="mui_get_all" type="button" class="mui-btn mui-btn-primary">mui_get请求_获取所有学生信息</button>
+</div>
+<br/>
+<div>
+    <button id="mui_get_byid" type="button" class="mui-btn mui-btn-primary">mui_get请求_根据id查询某个学生信息</button>
+</div>
+<br/>
+<div>
+    <button id="mui_post_add" type="button" class="mui-btn mui-btn-primary">mui_post请求_添加一个学生信息</button>
+</div>
+<br/>
+<div>
+    <button id="mui_put_update" type="button" class="mui-btn mui-btn-primary">mui_put请求_更新一个学生信息</button>
+</div>
+<br/>
+<div>
+    <button id="mui_delete_byid" type="button" class="mui-btn mui-btn-primary">mui_delete请求_删除一个学生信息</button>
+</div>
+
+
+<script src="../js/ucpm.js"></script>
+<script>
+    //mui_get请求_获取所有学生信息
+    document.getElementById("mui_get_all").addEventListener("click",function(){
+       mui.ajax(ucpm.baseUrl+"rest/student",{
+           data:"",
+           dataType:"json",
+           type:"get",
+           timeout:"30000",
+           headers:{
+               "Content-Type":"application/json"
+           },
+           success:function(data,textStatus,xhr){
+               console.log(textStatus);
+               console.log(data);
+           },
+           error:function(xhr,type,erroeThrown){
+               alert(type);
+           }
+       });
+    });
+    //mui_get请求_根据id查询某个学生信息
+    document.getElementById("mui_get_byid").addEventListener("click",function(){
+       mui.ajax(ucpm.baseUrl + "rest/student/2017003",{
+           data:"",
+           dataType:"json",
+           type:"get",
+           timeout:"30000",
+           headers:{
+               "Content-Type":"application/json",
+           },
+           success: function (data,textStatus,xhr) {
+               console.log(textStatus);
+               console.log(data);
+           },
+           error: function (type,xhr,erroeThrown) {
+               alert(type);
+           }
+       });
+    });
+    //mui_post请求_添加一个学生信息
+    document.getElementById("mui_post_add").addEventListener("click",function(){
+        mui.ajax(ucpm.baseUrl+"rest/student",{
+            data:{
+                id:2017004,
+                name:"邹易",
+                age:20,
+                sex:"女",
+                major:"c#"
+            },
+            dataType:"json",
+            type:"post",
+            timeout:"30000",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            success:function(data,textStatus,xhr){
+                console.log(textStatus);
+                console.log(data);
+            },
+            error: function (type,xhr,errorThrown) {
+                alert(type);
+            }
+        });
+    });
+    //mui_put请求_更新一个学生信息
+    document.getElementById("mui_put_update").addEventListener("click",function(){
+       mui.ajax(ucpm.baseUrl+"rest/student/2017001",{
+           data:{
+               id:2017001,
+               name:"张三",
+               age:32,
+               sex:"女",
+               major:"高护"
+           },
+           dataType:"json",
+           type:"put",
+           timeout:"30000",
+           headers:{
+               "Content-Type":"application/json"
+           },
+           success:function(data,textStatus,xhr){
+               console.log(textStatus);
+               console.log(data);
+           },
+           error:function(type,xhr,errorThrown){
+               alert(type);
+           }
+       });
+    });
+    //mui_delete请求_删除一个学生信息
+    document.getElementById("mui_delete_byid").addEventListener("click",function(){
+        mui.ajax(ucpm.baseUrl+"rest/student/2017004",{
+            data:"",
+            dataType:"json",
+            type:"delete",
+            timeout:"3000",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            success:function(data,textStatus,xhr){
+                console.log(textStatus);
+                console.log(data);
+            },
+            error:function(type,xhr,errorThrown){
+                alert(type);
+            }
+        });
+    })
+</script>
+</body>
+</html>

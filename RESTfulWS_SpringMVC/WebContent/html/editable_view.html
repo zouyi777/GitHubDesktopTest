@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <script src="../js/mui.js"></script>
+    <link href="../css/mui.css" rel="stylesheet"/>
+    <script type="text/javascript" charset="utf-8">
+        mui.init();
+    </script>
+    <style>
+        .scroll-container {
+            position: relative;
+            height: 100vh;
+            overflow:scroll;
+        }
+        /*弹性布局*/
+        .box{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            justify-content:space-between;
+            list-style: none;
+            background-color: #eeeeee;
+            padding: 0 5px;
+        }
+        .box li{
+            width: calc(50% - 1px);
+            background-color: white;
+            margin: 1px 0;
+            text-align: center;
+        }
+        img {
+            width: 100%;
+            height:auto;
+        }
+    </style>
+</head>
+<body>
+<div class="scroll-container" id="scroll_container">
+    <ul class="mui-table-view box" id="list_student">
+
+    </ul>
+</div>
+<script src="../js/ucpm.js"></script>
+<script type="text/html" id="list_li_tpl">
+    <% for(var i=0;i < this.length;i++){ %>
+    <% var obj = this[i]; %>
+    <% var index = i + 1; %>
+    <li>
+        <a href="javascript:;">
+            <img  src="<%=obj.headPic %>">
+            <div style="clear: both">
+                <p class="mui-ellipsis">
+                    <span class="name-label">
+                        姓名
+                    </span>
+                    <span>
+                       <%=obj.name %><%=index %>
+                    </span>
+                </p>
+                <p class="mui-ellipsis">
+                    <span class="sex-lebel">
+                        性别
+                    </span>
+                    <span>
+                        <%=obj.sex %>
+                    </span>
+                </p>
+                <p class="mui-ellipsis ">
+                    <span class="major-lebel">
+                        专业
+                    </span>
+                    <span>
+                        <%=obj.major %>
+                    </span>
+                </p>
+            </div>
+        </a>
+    </li>
+    <% } %>
+</script>
+<script>
+    var data = [];
+    function renderData(result){
+        var listStudent = document.getElementById("list_student");
+        var pendingHtml=document.getElementById("list_li_tpl").innerHTML;
+        var tpledHtml=ucpm.tpl(pendingHtml,result);
+        listStudent.innerHTML = tpledHtml;
+    }
+    function loadData(){
+        mui.ajax(ucpm.baseUrl+"rest/student",{
+            data:"",
+            dataType:"json",
+            type:"get",
+            timeout:"30000",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            success:function(result,testStatus,xhr){
+                console.log(testStatus);
+                console.log(result);
+                data = result;
+                renderData(result);
+            },
+            error:function(type,xhr,errorThrown){
+                console.log(type);
+                console.log(errorThrown);
+            }
+        });
+    }
+    loadData();
+    //下拉刷新,上拉加载
+    function pullRefreshLoad(scrollContainerId){
+        var isRefresh = false;
+        var isLoad = false;
+        var containerScrollTop = 0;
+        var startPageY = 0;//触摸开始时，相对于文档顶部的Y坐标
+        var scrollContainer = document.getElementById(scrollContainerId);//获取滚动容器
+        //创建刷新视图最外层的div标签，并且设置样式属性
+        var refreshViewDiv = document.createElement("div");
+        refreshViewDiv.style.textAlign="center";
+        refreshViewDiv.style.lineHeight="60px";
+        refreshViewDiv.style.marginTop="-60px";
+        //创建刷新视图中箭头图标
+        var arrowViewImg = document.createElement("img");
+        arrowViewImg.style.width = "20px";
+        arrowViewImg.style.height = "20px";
+        arrowViewImg.style.verticalAlign = "middle";
+        arrowViewImg.style.marginRight = "5px";
+        arrowViewImg.src = "../images/icon/xiafan.png"
+        refreshViewDiv.appendChild(arrowViewImg);
+        //创建刷新视图中的正在刷新图标
+        var refreshingViewImg = document.createElement("img");
+        refreshingViewImg.style.width = "25px";
+        refreshingViewImg.style.height = "25px";
+        refreshingViewImg.style.verticalAlign = "middle";
+        refreshingViewImg.style.marginRight = "5px";
+        refreshingViewImg.style.display = "none";
+        refreshingViewImg.src = "../images/icon/loading.gif";
+        refreshViewDiv.appendChild(refreshingViewImg);
+        //创建刷新视图中的下拉刷新提示语
+        var refreshViewSpan = document.createElement("span");
+        refreshViewSpan.innerHTML = "下拉刷新";
+        refreshViewDiv.appendChild(refreshViewSpan);
+        //将刷新视图插入到滚动容器第一个子元素前面
+        if(scrollContainer.children[0]){
+            scrollContainer.insertBefore(refreshViewDiv,scrollContainer.children[0]);
+        }else{
+            scrollContainer.appendChild(refreshViewDiv);
+        }
+        //创建加载视图最外层的div标签，并且设置样式属性
+        var loadViewDiv = document.createElement("div");
+        loadViewDiv.style.textAlign="center";
+        loadViewDiv.style.lineHeight="60px";
+        loadViewDiv.style.clear="both";
+        //创建加载视图中的正在加载动态图标，设置样式属性，并且添加到div中
+        var loadViewImg = document.createElement("img");
+        loadViewImg.style.width ="25px";
+        loadViewImg.style.height = "25px";
+        loadViewImg.style.verticalAlign="middle";
+        loadViewImg.style.display = "none";
+        loadViewImg.src ="../images/icon/loading.gif";
+        loadViewDiv.appendChild(loadViewImg);
+        //创建加载视图中的“上拉加载更多”提示
+        var loadViewSpan = document.createElement("span");
+        loadViewSpan.innerHTML="上拉加载更多";
+        loadViewDiv.appendChild(loadViewSpan);
+        //将加载视图追加在滚动容器的最后面
+        scrollContainer.appendChild(loadViewDiv);
+        //添加触摸事件监听
+        scrollContainer.addEventListener("touchstart",function(event){
+            startPageY = event.touches[0].pageY;//记录触摸开始时，相对于文档顶部的Y坐标
+        });
+        scrollContainer.addEventListener("touchmove",function(event){
+            var currentageY = event.touches[0].pageY;
+            var touchDis = currentageY - startPageY ;
+            if(scrollContainer.scrollTop <= 0 && touchDis > 0){//当滚动容器滚动到顶部,并且触摸向下滑动
+                refreshViewDiv.style.marginTop = parseFloat(refreshViewDiv.style.marginTop)
+                        + touchDis + "px";//使刷新视图的margin-top随着下拉距离增加而增加
+                startPageY = currentageY;
+                if(parseFloat(refreshViewDiv.style.marginTop) >= 0){//如果刷新视图已经显示完全了
+                    refreshViewSpan.innerHTML = "释放刷新";
+                    arrowViewImg.style.transform = "rotate(180deg)";//箭头方向旋转180度
+                    isRefresh = true;
+                }
+            }else if((scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight) && touchDis < 0 ){//当滚动容器滚动到底部,并且触摸向上滑动
+                isLoad = true;
+            }
+        });
+        scrollContainer.addEventListener("touchend",function(event){
+            if (isRefresh) {
+                refreshingViewImg.style.display = "";
+                refreshViewSpan.innerHTML = "正在刷新"
+                arrowViewImg.style.display = "none";
+                mui.ajax(ucpm.baseUrl + "rest/student", {
+                    data: "",
+                    dataType: "json",
+                    type: "get",
+                    timeout: "30000",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    success: function (result, testStatus, xhr) {
+                        console.log(testStatus);
+                        console.log(result);
+                        data = result;
+                        setTimeout(function () {
+                            renderData(data);
+                            var time = setInterval(function () {
+                                refreshViewDiv.style.marginTop = parseFloat(refreshViewDiv.style.marginTop) - 3 + 'px';
+                                if (parseFloat(refreshViewDiv.style.marginTop) <= -59) {
+                                    clearInterval(time);
+                                    isRefresh = false;
+                                    refreshViewDiv.style.marginTop = "-60px";
+                                    refreshViewSpan.innerHTML = "下拉刷新";
+                                    refreshingViewImg.style.display = "none";
+                                    arrowViewImg.style.transform = "none";//恢复旋转
+                                    arrowViewImg.style.display = "";
+                                }
+                            });
+                        }, 3000);
+                    },
+                    error: function (type, xhr, errorThrown) {
+                        console.log(type);
+                        console.log(errorThrown);
+                    }
+                });
+            } else {
+                var time = setInterval(function () {
+                    refreshViewDiv.style.marginTop = parseFloat(refreshViewDiv.style.marginTop) - 3 + 'px';
+                    if (parseFloat(refreshViewDiv.style.marginTop) <= -59) {
+                        clearInterval(time);
+                        refreshViewDiv.style.marginTop = "-60px";
+                        refreshViewSpan.innerHTML = "下拉刷新";
+                        refreshingViewImg.style.display = "none";
+                        arrowViewImg.style.transform = "none";//恢复旋转
+                        arrowViewImg.style.display = "";
+                    }
+                });
+            }
+            if(isLoad){
+                containerScrollTop = scrollContainer.scrollTop;
+                loadViewImg.style.display = "";
+                loadViewSpan.innerHTML = "加载中";
+                mui.ajax(ucpm.baseUrl+"rest/student",{
+                    data:"",
+                    dataType:"json",
+                    type:"get",
+                    timeout:"30000",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    success:function(result,testStatus,xhr){
+                        console.log(testStatus);
+                        console.log(result);
+                        for(var i=0;i<result.length;i++){
+                            data.push(result[i])
+                        }
+                        setTimeout(function(){
+                            renderData(data);
+                            scrollContainer.scrollTo(0,containerScrollTop);
+                            loadViewImg.style.display="none";
+                            loadViewSpan.innerHTML="上拉加载更多";
+                            isLoad = false ;
+                        },3000)  //  节流阀
+                    },
+                    error:function(type,xhr,errorThrown){
+                        console.log(type);
+                        console.log(errorThrown);
+                    }
+                });
+            }
+        });
+    };
+    pullRefreshLoad("scroll_container");
+</script>
+<script src="../js/editable.js"></script>
+</body>
+</html>

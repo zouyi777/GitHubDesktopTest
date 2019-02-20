@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>下拉刷新上拉加载demo</title>
+    <link type="text/css" rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div id="app">
+    <div id="article">
+        <div id="refresh_wrap" style="text-align: center;line-height: 60px;margin-top: -60px;">
+            <img id="refreshing" src="../images/icon/loading.gif" style="vertical-align: middle;width: 25px;height: 25px;margin-right: 5px;display: none">
+            <img id="pull_arrow" src="../images/icon/xiafan.png" style="vertical-align: middle;width: 20px;height: 20px;margin-right: 5px">
+            <span  id="pull_down">下拉刷新</span>
+        </div>
+        <ul id="ul">
+            <li class="li">1</li>
+            <li class="li">2</li>
+            <li class="li">3</li>
+            <li class="li">4</li>
+            <li class="li">5</li>
+            <li class="li">6</li>
+            <li class="li">7</li>
+            <li class="li">8</li>
+            <li class="li">9</li>
+            <li class="li">10</li>
+        </ul>
+        <div style="text-align: center;line-height: 60px;">
+            <img id="loading" src="../images/icon/loading.gif" style="vertical-align: middle;width: 25px;height: 25px;display: none">
+            <span  id="pull_up">上拉加载更多</span>
+        </div>
+    </div>
+</div>
+
+<script src="../js/index.js"></script>
+</body>
+</html>

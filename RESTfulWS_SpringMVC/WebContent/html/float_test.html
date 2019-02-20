@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!--
+float样式属性:
+    首先设置的几个float属性遇到超过父容器的情况下会自动换行
+    其次如果float属性“前面”是没有定义float属性的块元素会自动换行，后面有会将其覆盖
+    loat属性优先级大于margin属性，
+    使用了float属性后margin属性定义可能会没有效果，
+    float属性对后面的属性模块会产生影响，
+    将后面如果消除后面的影响可以采用clear:both属性即不允许有浮动对象
+-->
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        .box {
+            padding: 5px 5px;
+            height: 50px;
+            width: 100px;
+            float: left;
+        }
+        .nofloat {
+            padding: 5px 5px;
+            height: 50px;
+            width: 100px;
+        }
+        .content {
+            background-color: #eeeeee;
+            height: 50px;
+        }
+        .nofloat-content {
+            background-color: #4cd964;
+            height: 50px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="nofloat">
+    <div class="nofloat-content"></div>
+</div>
+<div class="box">
+    <div class="content"></div>
+</div>
+<div class="box">
+    <div class="content"></div>
+</div>
+
+
+
+<div class="box">
+    <div class="content"></div>
+</div>
+<div class="box">
+    <div class="content"></div>
+</div>
+<div class="box">
+    <div class="content"></div>
+</div>
+<div class="box">
+    <div class="content"></div>
+</div>
+<div class="nofloat" style=" width: 120px;">
+    <div class="nofloat-content" style="background-color: #ff5053;"></div>
+</div>
+</body>
+</html>
